@@ -1,10 +1,12 @@
-import SwipableDrawer from './mui/SwipableDrawer'
+// import SwipableDrawer from './mui/SwipableDrawer'
+import Shubham from "./Shivam"
 function App() {
 
 
   return (
     <>
-      <SwipableDrawer/>
+    <Shubham/>
+      {/* <SwipableDrawer/> */}
     </>
   )
 }
