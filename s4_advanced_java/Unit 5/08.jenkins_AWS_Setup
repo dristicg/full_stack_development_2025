@@ -1,0 +1,118 @@
+# Install Java 17, Tomcat 9, Jenkins
+
+## For Windows + MacBook Users (Connecting to AWS EC2 Ubuntu Server)
+
+## Final Setup
+
+| Software | Port |
+|---|---|
+| Jenkins | 8080 |
+| Tomcat 9 | 8081 |
+| SSH | 22 |
+
+## PART 1: Connect to EC2 Server
+
+### Windows (PowerShell)
+
+```powershell
+cd Downloads
+ssh -i .\jenkins.pem ubuntu@YOUR_PUBLIC_IP
+```
+
+### MacBook (Terminal)
+
+```bash
+cd ~/Downloads
+chmod 400 jenkins.pem
+ssh -i jenkins.pem ubuntu@YOUR_PUBLIC_IP
+```
+
+## PART 2: Update Server
+
+```bash
+sudo apt update && sudo apt upgrade -y
+```
+
+## PART 3: Install Java 17
+
+```bash
+sudo apt install openjdk-17-jdk -y
+java -version
+```
+
+## PART 4: Install Tomcat 9
+
+```bash
+cd /opt
+sudo wget https://archive.apache.org/dist/tomcat/tomcat-9/v9.0.102/bin/apache-tomcat-9.0.102.tar.gz
+sudo tar -xvzf apache-tomcat-9.0.102.tar.gz
+sudo mv apache-tomcat-9.0.102 tomcat9
+sudo chmod +x /opt/tomcat9/bin/*.sh
+sudo /opt/tomcat9/bin/startup.sh
+```
+
+## PART 5: Change Tomcat Port to 8081
+
+```bash
+sudo nano /opt/tomcat9/conf/server.xml
+```
+
+Change `port="8080"` to `port="8081"` then:
+
+```bash
+sudo /opt/tomcat9/bin/shutdown.sh
+sudo /opt/tomcat9/bin/startup.sh
+```
+
+## PART 6: Install Jenkins
+
+```bash
+sudo apt install fontconfig openjdk-17-jre curl wget -y
+sudo mkdir -p /etc/apt/keyrings
+sudo wget -O /etc/apt/keyrings/jenkins-keyring.asc https://pkg.jenkins.io/debian-stable/jenkins.io-2026.key
+echo "deb [signed-by=/etc/apt/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian-stable binary/" | sudo tee /etc/apt/sources.list.d/jenkins.list > /dev/null
+sudo apt update
+sudo apt install jenkins -y
+```
+
+## PART 7: Start Jenkins
+
+```bash
+sudo systemctl enable jenkins
+sudo systemctl start jenkins
+sudo systemctl status jenkins
+```
+
+## PART 8: Open Ports in AWS Security Group
+
+- 22
+- 8080
+- 8081
+
+## PART 9: Open in Browser
+
+- Jenkins: `http://YOUR_PUBLIC_IP:8080`
+- Tomcat: `http://YOUR_PUBLIC_IP:8081`
+
+## PART 10: Jenkins Initial Password
+
+```bash
+sudo cat /var/lib/jenkins/secrets/initialAdminPassword
+```
+
+## Useful Commands
+
+### Jenkins
+
+```bash
+sudo systemctl start jenkins
+sudo systemctl stop jenkins
+sudo systemctl restart jenkins
+```
+
+### Tomcat
+
+```bash
+sudo /opt/tomcat9/bin/startup.sh
+sudo /opt/tomcat9/bin/shutdown.sh
+```
